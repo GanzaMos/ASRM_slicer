@@ -8,7 +8,7 @@ using UnityEditor.Rendering;
 public class SliceComponent : MonoBehaviour
 {
     [SerializeField] GameObject target;
-    [SerializeField] Material crossSectionMaterial;
+    //[SerializeField] Material crossSectionMaterial;
     
     // Start is called before the first frame update
     void Start()
@@ -19,7 +19,7 @@ public class SliceComponent : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
-            Slice(target);
+            Slice(target, target.GetComponent<Material>());
     }
 
     void FixedUpdate()
@@ -29,17 +29,17 @@ public class SliceComponent : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         Debug.Log("Collision");
-        Slice(target);
+        Slice(collision.gameObject, collision.gameObject.GetComponent<MeshRenderer>().material);
     }
 
-    public void Slice(GameObject target)
+    public void Slice(GameObject target, Material crossMaterial)
     {
         SlicedHull hull = target.Slice(this.transform.position, this.transform.up);
 
         if (hull == null) return;
         
-        GameObject upperHull = hull.CreateUpperHull(target, crossSectionMaterial);
-        GameObject lowerHull = hull.CreateLowerHull(target, crossSectionMaterial);
+        GameObject upperHull = hull.CreateUpperHull(target, crossMaterial);
+        GameObject lowerHull = hull.CreateLowerHull(target, crossMaterial);
         
         Destroy(target);
     }
